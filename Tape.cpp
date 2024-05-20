@@ -1,9 +1,11 @@
 ﻿#include <iostream>
 #include <iomanip>
-#include "Tape.h"
 #include <exception>
+#include <chrono>
+#include <thread>
+#include "Tape.h"
 
-Tape::Tape(std::fstream &stream) : stream(stream), ended(false), index(0)
+Tape::Tape(std::fstream &stream, const unsigned int latency /*= 0*/) : stream(stream), index(0), ended(false), latency(latency)
 {
 	stream.seekg(0, std::ios::end);
 	if (stream.tellg() < 1)
@@ -19,6 +21,7 @@ Tape::~Tape()
 
 int Tape::readValue()
 {
+	simulateLatency();
 	stream.seekg(index, std::ios::beg);
 	int value;
 	stream >> value;
@@ -32,6 +35,7 @@ int Tape::readValue()
 
 void Tape::writeValue(int newValue)
 {
+	simulateLatency();
 	ended = false;
 	stream.seekp(index, std::ios::beg);
 	stream << std::left << std::setw(12) << std::setfill(' ') << newValue;
@@ -41,6 +45,7 @@ void Tape::writeValue(int newValue)
 
 void Tape::nextPosition()
 {
+	simulateLatency();
 	if (ended)
 	{
 		throw std::out_of_range("ERROR: Position is out of range!");
@@ -63,6 +68,7 @@ void Tape::nextPosition()
 
 void Tape::previousPosition()
 {
+	simulateLatency();
 	if (index == 0)
 	{
 		throw std::out_of_range("ERROR: Position is out of range!1");
@@ -78,6 +84,7 @@ bool Tape::isAtTheEnd()
 
 void Tape::reset()
 {
+	simulateLatency();
 	stream.clear();
 	index = 0;
 	stream.seekg(0, std::ios::end);
@@ -89,4 +96,9 @@ void Tape::reset()
 	{
 		ended = false;
 	}
+}
+
+void Tape::simulateLatency()
+{
+	std::this_thread::sleep_for(std::chrono::milliseconds(latency));
 }

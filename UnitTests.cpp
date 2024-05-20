@@ -1,6 +1,31 @@
 #include <gtest/gtest.h>
 #include "NaturalMergeTapeSort.h"
 
+class NaturalMergeTapeSortTest : public testing::Test
+{
+protected:
+    // Убрать задержку для тестов
+    NaturalMergeTapeSortTest()
+    {
+        std::fstream configFile("config.txt");
+        configFile >> latency;
+        configFile.close();
+        configFile.open("config.txt", std::ios::out | std::ios::trunc);
+        configFile << 0;
+        configFile.flush();
+        configFile.close();
+    }
+    // Вернуть задержку
+    ~NaturalMergeTapeSortTest()
+    {
+        std::fstream configFile("config.txt", std::ios::out | std::ios::trunc);
+        configFile << latency;
+        configFile.flush();
+        configFile.close();
+    }
+    unsigned int latency;
+};
+
 bool isSorted(Tape &tape)
 {
     if (tape.isAtTheEnd())
@@ -21,7 +46,7 @@ bool isSorted(Tape &tape)
     return true;
 }
 
-TEST(NaturalMergeTapeSortTest, InvalidInputData)
+TEST_F(NaturalMergeTapeSortTest, InvalidInputData)
 {
     std::fstream input("tapeInvalid.txt");
     Tape inputTape(input);
@@ -36,7 +61,7 @@ TEST(NaturalMergeTapeSortTest, InvalidInputData)
     }
 }
 
-TEST(NaturalMergeTapeSortTest, 0ElementsSorting)
+TEST_F(NaturalMergeTapeSortTest, 0ElementsSorting)
 {
     std::fstream input("tape0.txt");
     Tape inputTape(input);
@@ -48,7 +73,7 @@ TEST(NaturalMergeTapeSortTest, 0ElementsSorting)
     ASSERT_TRUE(isSorted(outputTape));
 }
 
-TEST(NaturalMergeTapeSortTest, 1ElementSorting)
+TEST_F(NaturalMergeTapeSortTest, 1ElementSorting)
 {
     std::fstream input("tape1.txt");
     Tape inputTape(input);
@@ -60,7 +85,7 @@ TEST(NaturalMergeTapeSortTest, 1ElementSorting)
     ASSERT_TRUE(isSorted(outputTape));
 }
 
-TEST(NaturalMergeTapeSortTest, 5ElementSorting)
+TEST_F(NaturalMergeTapeSortTest, 5ElementSorting)
 {
     std::fstream input("tape5.txt");
     Tape inputTape(input);
@@ -72,7 +97,7 @@ TEST(NaturalMergeTapeSortTest, 5ElementSorting)
     ASSERT_TRUE(isSorted(outputTape));
 }
 
-TEST(NaturalMergeTapeSortTest, 1000ElementSorting)
+TEST_F(NaturalMergeTapeSortTest, 1000ElementSorting)
 {
     std::fstream input("tape1000.txt");
     Tape inputTape(input);
@@ -83,18 +108,6 @@ TEST(NaturalMergeTapeSortTest, 1000ElementSorting)
     Tape outputTape(outputFile);
     ASSERT_TRUE(isSorted(outputTape));
 }
-
-// TEST(NaturalMergeTapeSortTest, 1000000ElementSorting)
-// {
-//     std::fstream input("tape1000000.txt");
-//     Tape inputTape(input);
-
-//     NaturalMergeTapeSort::sort(inputTape);
-
-//     std::fstream outputFile("output.txt");
-//     Tape outputTape(outputFile);
-//     ASSERT_TRUE(isSorted(outputTape));
-// }
 
 int main(int argc, char **argv)
 {

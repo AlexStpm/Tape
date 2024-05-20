@@ -6,7 +6,7 @@ class Tape
 {
 public:
 	Tape() = delete;
-	Tape(std::fstream &);
+	Tape(std::fstream &, const unsigned int latency = 0);
 	Tape(const Tape &) = delete;
 	Tape(Tape &&) noexcept = delete;
 	Tape &operator=(Tape &&) noexcept = delete;
@@ -19,9 +19,11 @@ public:
 	~Tape();
 
 private:
-	int index;
 	std::fstream &stream;
+	int index;
 	bool ended;
+	const unsigned int latency;
+	void simulateLatency();
 };
 
 #endif // !TAPE_H

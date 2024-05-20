@@ -6,7 +6,12 @@ void NaturalMergeTapeSort::sort(Tape &inputTape)
 	bool sorted = true;
 	std::fstream outputTapeFile("output.txt", std::ios::out | std::ios::in | std::ios::trunc);
 
-	Tape outputTape(outputTapeFile);
+	int latency = 0;
+
+	std::fstream configFile("config.txt");
+	configFile >> latency;
+
+	Tape outputTape(outputTapeFile, latency);
 
 	// Копируем ленту в выходную, проверяем отсортирована ли она
 	if (!inputTape.isAtTheEnd())
@@ -46,7 +51,7 @@ void NaturalMergeTapeSort::sort(Tape &inputTape)
 		std::fstream firstTapeFile("./tmp/firstTape.txt", std::ios::out | std::ios::in | std::ios::trunc);
 		std::fstream secondTapeFile("./tmp/secondTape.txt", std::ios::out | std::ios::in | std::ios::trunc);
 
-		Tape firstTape(firstTapeFile), secondTape(secondTapeFile);
+		Tape firstTape(firstTapeFile, latency), secondTape(secondTapeFile, latency);
 
 		int lastValue = outputTape.readValue();
 
