@@ -22,9 +22,13 @@ int main(int argc, char *argv[])
 
 	config >> latency;
 
-	if (config.fail())
+	if (config.fail() || latency < 0)
 	{
 		std::cout << "Invalid data in config file. Default latency is set to 0" << std::endl;
+		config.close();
+		config.open("config.txt", std::ios::out | std::ios::trunc);
+        config << 0;
+        config.flush();
 	}
 	else
 	{
